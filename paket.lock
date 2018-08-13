@@ -1,0 +1,7 @@
+NUGET
+  remote: https://www.nuget.org/api/v2
+    System.ComponentModel.Annotations (4.5) - restriction: >= net45
+    XmlSchemaClassGenerator-beta (2.0.147) - restriction: >= net45
+      System.ComponentModel.Annotations (>= 4.4.1) - restriction: >= net45
+    XmlSchemaClassGenerator.Console (2.0.147)
+      XmlSchemaClassGenerator-beta (>= 2.0.147) - restriction: >= net45
