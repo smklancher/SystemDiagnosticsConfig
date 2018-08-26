@@ -12,4 +12,21 @@ namespace SystemDiagnosticsConfig
     {
         
     }
+
+    public partial class ListenerElementCT
+    {
+
+
+        /// <summary>
+        /// <para>Optional System.String </para>
+        /// </summary>
+        [System.Xml.Serialization.XmlAttributeAttribute("maxFileSizeKB", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, DataType = "string")]
+        public string MaxFileSizeKB { get; set; }
+
+        /// <summary>
+        /// <para>Optional System.String []</para>
+        /// </summary>
+        [System.Xml.Serialization.XmlAttributeAttribute("maxFilesAmount", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, DataType = "string")]
+        public string MaxFilesAmount { get; set; }
+    }
 }

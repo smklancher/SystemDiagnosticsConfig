@@ -12,36 +12,61 @@ namespace SystemDiagnosticsConfig
 {
     public class ConfigFile
     {
+        private const string sdkeyname = "system.diagnostics";
         private readonly string filename;
-        protected readonly XDocument xdoc;
         private SystemDiagnosticsConfigCT sysdiag;
 
         public ConfigFile(string file)
         {
             filename = file;
-            xdoc = XDocument.Load(filename);
+            XDoc = XDocument.Load(filename);
         }
 
         public ConfigFile(XDocument doc)
         {
-            xdoc = doc;
+            XDoc = doc;
         }
 
-        private XElement SysDiagElementOrNull()
+        public XDocument XDoc { get; }
+
+        public XElement SysDiagElement()
         {
-            return xdoc.Descendants("system.diagnostics").FirstOrDefault();
+            // get existing element
+            var sd = XDoc.Root.Elements(sdkeyname).FirstOrDefault(); 
+
+            // or get commented out element
+            if (sd == null)
+            {
+                var sdcomment = XDoc.Root.GetDescendantsCommentedOut(sdkeyname).FirstOrDefault();
+                sdcomment?.TryUncomment(out sd);
+            }
+
+            // or add default element
+            if (sd == null)
+            {
+                sd = new XElement(sdkeyname);
+                XDoc.Root.Add(sd);
+            }
+            return sd;
         }
 
         public SystemDiagnosticsConfigCT SysDiag
         {
             get
             {
-                if (sysdiag == null && SysDiagElementOrNull()!=null)
-                {
-                    sysdiag = Deserialize<SystemDiagnosticsConfigCT>(SysDiagElementOrNull().ToString());
-                }
+                sysdiag = Deserialize<SystemDiagnosticsConfigCT>(SysDiagElement().ToString());
                 return sysdiag;
             } 
+        }
+
+        public void UpdateFromSysDiag()
+        {
+            SysDiagElement().ReplaceWith(SysDiagObjXml());
+        }
+
+        public XElement SysDiagObjXml()
+        {
+            return SerializeToXElement(SysDiag);
         }
 
         private static T Deserialize<T>(string data) where T : class, new()
@@ -57,7 +82,7 @@ namespace SystemDiagnosticsConfig
             }
         }
 
-        public static XElement SerializeToXElement(object o)
+        private static XElement SerializeToXElement(object o)
         {
             var doc = new XDocument();
             using (XmlWriter writer = doc.CreateWriter())
@@ -71,5 +96,6 @@ namespace SystemDiagnosticsConfig
 
             return doc.Root;
         }
+        
     }
 }

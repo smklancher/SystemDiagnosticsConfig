@@ -25,7 +25,7 @@ namespace SystemDiagnosticsConfig
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlRootAttribute("system.diagnostics")]
-    public partial class SystemDiagnosticsConfigCT
+    public partial class SystemDiagnosticsConfigCT : XmlSerializationElement
     {
         
         /// <summary>
@@ -108,7 +108,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("assertCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class AssertCT
+    public partial class AssertCT : XmlSerializationElement
     {
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -145,7 +145,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("performanceCountersCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class PerformanceCountersCT
+    public partial class PerformanceCountersCT : XmlSerializationElement
     {
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -176,7 +176,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("sourcesCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SourcesCT
+    public partial class SourcesCT : XmlSerializationElement
     {
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -227,7 +227,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("SourceElementCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SourceElementCT
+    public partial class SourceElementCT : XmlSerializationElement
     {
         
         /// <summary>
@@ -268,7 +268,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("listenersCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ListenersCT
+    public partial class ListenersCT : XmlSerializationElement
     {
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -383,7 +383,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("ListenersCTRemove", AnonymousType=true)]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ListenersCTRemove
+    public partial class ListenersCTRemove : XmlSerializationElement
     {
         
         /// <summary>
@@ -400,7 +400,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("ListenerElementCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ListenerElementCT
+    public partial class ListenerElementCT : XmlSerializationElement
     {
         
         /// <summary>
@@ -455,7 +455,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("filterCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class FilterCT
+    public partial class FilterCT : XmlSerializationElement
     {
         
         /// <summary>
@@ -515,7 +515,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("switchesCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SwitchesCT
+    public partial class SwitchesCT : XmlSerializationElement
     {
         
         [System.Xml.Serialization.XmlIgnoreAttribute()]
@@ -630,7 +630,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("SwitchesCTRemove", AnonymousType=true)]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SwitchesCTRemove
+    public partial class SwitchesCTRemove : XmlSerializationElement
     {
         
         /// <summary>
@@ -647,7 +647,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("SwitchElementCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SwitchElementCT
+    public partial class SwitchElementCT : XmlSerializationElement
     {
         
         /// <summary>
@@ -670,7 +670,7 @@ namespace SystemDiagnosticsConfig
     [System.Xml.Serialization.XmlTypeAttribute("traceCT")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class TraceCT
+    public partial class TraceCT : XmlSerializationElement
     {
         
         /// <summary>

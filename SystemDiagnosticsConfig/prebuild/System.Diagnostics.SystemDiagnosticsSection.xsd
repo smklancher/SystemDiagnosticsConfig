@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:tns="http://System.Diagnostics.SystemDiagnosticsSection" elementFormDefault="qualified" targetNamespace="http://System.Diagnostics.SystemDiagnosticsSection" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="SystemDiagnosticsConfigCT">
+    <xs:annotation>
+      <xs:documentation />
+      <xs:appinfo>System.Diagnostics.SystemDiagnosticsSection</xs:appinfo>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="assert" type="tns:assertCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.AssertSection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionAssert</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="performanceCounters" type="tns:performanceCountersCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.PerfCounterSection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionPerfCounters</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="sources" type="tns:sourcesCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.SourceElementsCollection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionSources</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="sharedListeners" type="tns:listenersCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.ListenerElementsCollection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionSharedListeners</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="switches" type="tns:switchesCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.SwitchElementsCollection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionSwitches</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="trace" type="tns:traceCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.TraceSection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionTrace</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <xs:element name="SystemDiagnosticsConfig" type="tns:SystemDiagnosticsConfigCT" />
+  <xs:complexType name="assertCT">
+    <xs:annotation>
+      <xs:documentation />
+      <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionAssert</xs:appinfo>
+    </xs:annotation>
+    <xs:all />
+    <xs:attribute default="true" name="assertuienabled" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.Boolean [True]</xs:documentation>
+        <xs:appinfo>System.Diagnostics.AssertSectionAssertUIEnabled</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:boolean" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="logfilename" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.String []</xs:documentation>
+        <xs:appinfo>System.Diagnostics.AssertSectionLogFileName</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="performanceCountersCT">
+    <xs:annotation>
+      <xs:documentation />
+      <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionPerfCounters</xs:appinfo>
+    </xs:annotation>
+    <xs:all />
+    <xs:attribute default="524288" name="filemappingsize" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.Int32 [524288]</xs:documentation>
+        <xs:appinfo>System.Diagnostics.PerfCounterSectionFileMappingSize</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:int" />
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="sourcesCT">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="source" type="tns:SourceElementCT" />
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="SourceElementCT">
+    <xs:all>
+      <xs:element minOccurs="0" name="listeners" type="tns:listenersCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.ListenerElementsCollection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.SourceElementListeners</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="name" use="required">
+      <xs:annotation>
+        <xs:documentation>Required System.String []</xs:documentation>
+        <xs:appinfo>System.Diagnostics.SourceElementName</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="switchName" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.String </xs:documentation>
+        <xs:appinfo>System.Diagnostics.SourceElementSwitchName</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="switchValue" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.String </xs:documentation>
+        <xs:appinfo>System.Diagnostics.SourceElementSwitchValue</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="switchType" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.String </xs:documentation>
+        <xs:appinfo>System.Diagnostics.SourceElementSwitchType</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="listenersCT">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element minOccurs="0" maxOccurs="1" name="clear" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="remove">
+        <xs:complexType>
+          <xs:attribute name="name" use="required">
+            <xs:annotation>
+              <xs:documentation>Required System.String </xs:documentation>
+              <xs:appinfo>System.Diagnostics.ListenerElementName</xs:appinfo>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="add" type="tns:ListenerElementCT" />
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="ListenerElementCT">
+    <xs:all>
+      <xs:element minOccurs="0" name="filter" type="tns:filterCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.FilterElement </xs:documentation>
+          <xs:appinfo>System.Diagnostics.ListenerElementFilter</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="name" use="required">
+      <xs:annotation>
+        <xs:documentation>Required System.String </xs:documentation>
+        <xs:appinfo>System.Diagnostics.ListenerElementName</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute default="None" name="traceOutputOptions" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.Diagnostics.TraceOptions [None]</xs:documentation>
+        <xs:appinfo>System.Diagnostics.ListenerElementTraceOutputOptions</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="None" />
+          <xs:enumeration value="LogicalOperationStack" />
+          <xs:enumeration value="DateTime" />
+          <xs:enumeration value="Timestamp" />
+          <xs:enumeration value="ProcessId" />
+          <xs:enumeration value="ThreadId" />
+          <xs:enumeration value="Callstack" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="type" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.String </xs:documentation>
+        <xs:appinfo>System.Diagnostics.ListenerElementTypeName</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="initializeData" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.String []</xs:documentation>
+        <xs:appinfo>System.Diagnostics.TypedElementInitData</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="filterCT">
+    <xs:annotation>
+      <xs:documentation />
+      <xs:appinfo>System.Diagnostics.ListenerElementFilter</xs:appinfo>
+    </xs:annotation>
+    <xs:all />
+    <xs:attribute name="initializeData" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.String []</xs:documentation>
+        <xs:appinfo>System.Diagnostics.TypedElementInitData</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="type" use="required">
+      <xs:annotation>
+        <xs:documentation>Required System.String []</xs:documentation>
+        <xs:appinfo>System.Diagnostics.TypedElementTypeName</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="switchesCT">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element minOccurs="0" maxOccurs="1" name="clear" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="remove">
+        <xs:complexType>
+          <xs:attribute name="name" use="required">
+            <xs:annotation>
+              <xs:documentation>Required System.String []</xs:documentation>
+              <xs:appinfo>System.Diagnostics.SwitchElementName</xs:appinfo>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="add" type="tns:SwitchElementCT" />
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="SwitchElementCT">
+    <xs:all />
+    <xs:attribute name="name" use="required">
+      <xs:annotation>
+        <xs:documentation>Required System.String []</xs:documentation>
+        <xs:appinfo>System.Diagnostics.SwitchElementName</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="value" use="required">
+      <xs:annotation>
+        <xs:documentation>Required System.String </xs:documentation>
+        <xs:appinfo>System.Diagnostics.SwitchElementValue</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string" />
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="traceCT">
+    <xs:annotation>
+      <xs:documentation />
+      <xs:appinfo>System.Diagnostics.SystemDiagnosticsSectionTrace</xs:appinfo>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="listeners" type="tns:listenersCT">
+        <xs:annotation>
+          <xs:documentation>Optional System.Diagnostics.ListenerElementsCollection </xs:documentation>
+          <xs:appinfo>System.Diagnostics.TraceSectionListeners</xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute default="false" name="autoflush" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.Boolean [False]</xs:documentation>
+        <xs:appinfo>System.Diagnostics.TraceSectionAutoFlush</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:boolean" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute default="4" name="indentsize" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.Int32 [4]</xs:documentation>
+        <xs:appinfo>System.Diagnostics.TraceSectionIndentSize</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:int" />
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute default="true" name="useGlobalLock" use="optional">
+      <xs:annotation>
+        <xs:documentation>Optional System.Boolean [True]</xs:documentation>
+        <xs:appinfo>System.Diagnostics.TraceSectionUseGlobalLock</xs:appinfo>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:boolean" />
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+</xs:schema>
