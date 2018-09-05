@@ -421,8 +421,7 @@ namespace SystemDiagnosticsConfig
         /// <summary>
         /// <para>Optional System.Diagnostics.TraceOptions [None]</para>
         /// </summary>
-        [System.ComponentModel.DefaultValueAttribute(SystemDiagnosticsConfig.ListenerElementCTTraceOutputOptions.None)]
-        [System.Xml.Serialization.XmlAttributeAttribute("traceOutputOptions", Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
         public ListenerElementCTTraceOutputOptions TraceOutputOptions
         {
             get
@@ -740,3 +739,4 @@ namespace SystemDiagnosticsConfig
         }
     }
 }
+

@@ -29,12 +29,12 @@ namespace SystemDiagnosticsConfig
         }
 
         /// <summary>
-        /// Returns true if the text of the comment correctly parses as an XElement, available as out el.
+        /// Returns true if the text of the comment correctly parses as an XElement, available as out el (but with no parent!).
         /// </summary>
         /// <param name="comment"></param>
         /// <param name="el"></param>
         /// <returns></returns>
-        public static bool TryGetElementFromComment(this XComment comment, out XElement el)
+        public static bool IsCommentValidXml(this XComment comment, out XElement el)
         {
             XDocument doc;
             try
@@ -57,9 +57,14 @@ namespace SystemDiagnosticsConfig
         /// <returns></returns>
         public static bool TryUncomment(this XComment comment, out XElement el)
         {
-            if (comment.TryGetElementFromComment(out el))
+            if (comment.IsCommentValidXml(out el))
             {
+                var parent = comment.Parent;
+                var next = comment.NextNode;
+                var prev = comment.PreviousNode;
                 comment.ReplaceWith(el);
+                //need to update el with the "connected" version of the element (same name, prev & next nodes)
+                el=parent.Elements(el.Name).Where(x => x.NextNode == next && x.PreviousNode == prev).First();
                 return true;
             }
             return false;
@@ -71,7 +76,8 @@ namespace SystemDiagnosticsConfig
         /// <param name="el"></param>
         public static void CommentOut(this XElement el)
         {
-            el.ReplaceWith(new XComment(el.ToString()));
+            XComment content = new XComment(el.ToString());
+            el.ReplaceWith(content);
         }
 
         /// <summary>
@@ -88,7 +94,7 @@ namespace SystemDiagnosticsConfig
 
             // return any that parse to valid xml with this element name
             var commentedElements = comments.Where(x => {
-                if (x.TryGetElementFromComment(out XElement el))
+                if (x.IsCommentValidXml(out XElement el))
                 {
                     return (el.Name == name);
                 }

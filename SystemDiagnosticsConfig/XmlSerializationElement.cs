@@ -22,7 +22,7 @@ namespace SystemDiagnosticsConfig
         /// Object was programmatically uncommented before deserializing xml
         /// </summary>
         [System.Xml.Serialization.XmlIgnoreAttribute()]
-        public bool WasComment { get; set; }
+        public bool IsComment { get; set; }
 
         //XmlSchema IXmlSerializable.GetSchema()
         //{
