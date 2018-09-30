@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,16 +12,18 @@ using System.Xml.Serialization;
 
 namespace SystemDiagnosticsConfig
 {
+
+    [TypeConverter(typeof(BlankExpandConverter))]
     public class ConfigFile
     {
         private const string sdkeyname = "system.diagnostics";
         private SystemDiagnosticsConfigCT sysdiag;
-        public string Filename { get; private set; }
 
         public ConfigFile(string file)
         {
             Filename = file;
             XDoc = XDocument.Load(Filename);
+            //Listeners = GetLogListeners();
         }
 
         public ConfigFile(XDocument doc)
@@ -28,10 +31,34 @@ namespace SystemDiagnosticsConfig
             XDoc = doc;
         }
 
+        [Browsable(false)]
+        public string Filename { get; private set; }
+
         /// <summary>
         /// Config file XML
         /// </summary>
+        [Browsable(false)]
         public XDocument XDoc { get; }
+
+        //public LogListenerCollection Listeners { get; set; }
+
+        public IEnumerable<LogDefinition> Definitions
+        {
+            get
+            {
+                //Debug.Write(GetType().ToString());
+                var props = GetType().GetProperties();
+                foreach(var p in props)
+                {
+                    //Debug.WriteLine($"{p.Name} = {p.PropertyType.ToString()}");
+                    if (p.CanRead && typeof(LogDefinition).IsAssignableFrom(p.PropertyType))
+                    {
+                        yield return (LogDefinition)p.GetValue(this);
+                    }
+                    
+                }
+            }
+        }
 
         /// <summary>
         /// XML from the system.diagnostics section, whether existing, commented out, or newly created
@@ -76,6 +103,7 @@ namespace SystemDiagnosticsConfig
             return sd;
         }
 
+        [Browsable(false)]
         public SystemDiagnosticsConfigCT SysDiag
         {
             get
@@ -93,17 +121,58 @@ namespace SystemDiagnosticsConfig
             } 
         }
 
-        /// <summary>
-        /// Update serialize the SysDiag object back into XDoc
-        /// </summary>
-        public void UpdateFromSysDiag()
-        {
-            SysDiagElement().ReplaceWith(SysDiagObjXml());
-        }
+        //private LogListenerCollection GetLogListeners()
+        //{
+        //    var list = new LogListenerCollection();
+
+        //    // Trace listeners
+        //    if (SysDiag.Trace?.ListenersEx?.Add != null)
+        //    {
+        //        foreach (var l in SysDiag.Trace.ListenersEx.Add)
+        //        {
+        //            list.Add(new LogListener(SysDiag, l));
+
+        //        }
+        //    }
+            
+
+        //    // Shared listeners
+        //    if (SysDiag.SharedListenersEx?.Add != null)
+        //    {
+        //        foreach (var l in SysDiag.SharedListenersEx.Add)
+        //        {
+        //            list.Add(new LogListener(SysDiag, l));
+        //        }
+        //    }
+            
+
+        //    // Source listeners that are not reference to shared
+        //    if (SysDiag.Sources != null)
+        //    {
+        //        foreach (var s in SysDiag.Sources)
+        //        {
+        //            if(s.ListenersEx?.Add != null)
+        //            {
+        //                foreach (var l in s.ListenersEx.Add)
+        //                {
+        //                    if (!String.IsNullOrEmpty(l.Type))
+        //                    {
+        //                        list.Add(new LogListener(SysDiag, l));
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+            
+
+        //    return list;
+        //}
+        
 
         public void SaveXml()
         {
-            UpdateFromSysDiag();
+            // Update the xml by serializing the SysDiag object back into the XDoc
+            SysDiagElement().ReplaceWith(SysDiagObjXml());
             if (SysDiag.IsComment)
             {
                 SysDiagElement().CommentOut();

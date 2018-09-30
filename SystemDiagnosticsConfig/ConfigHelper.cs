@@ -12,14 +12,15 @@ namespace SystemDiagnosticsConfig
         Unknown,
         Trace,
         Source,
-        Shared
+        Shared,
+        ReferenceToShared
     }
 
     public class ConfigHelper
     {
         
 
-        public static object SetSharedListener(SystemDiagnosticsConfigCT SysDiag, string name, string type, string initializeData)
+        public static ListenerElementCT SetSharedListener(SystemDiagnosticsConfigCT SysDiag, string name, string type, string initializeData)
         {
             return SetListener(SysDiag, name, type, initializeData, ListenerLocation.Shared);
         }
@@ -31,30 +32,30 @@ namespace SystemDiagnosticsConfig
 
         public static ListenerElementCT GetListenerOrNull(SystemDiagnosticsConfigCT SysDiag, string name)
         {
-            return SysDiag?.Trace?.Listeners?.Add?.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
+            return SysDiag?.Trace?.ListenersEx?.Add?.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
         }
 
         public static ListenerElementCT GetSharedListenerOrNull(SystemDiagnosticsConfigCT SysDiag, string name)
         {
-            return SysDiag?.SharedListeners?.Add?.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
+            return SysDiag?.SharedListenersEx?.Add?.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
         }
         public static ListenerElementCT GetSharedListenerOrNull(SystemDiagnosticsConfigCT SysDiag, string sourceName, string name)
         {
-            return SysDiag?.Sources?.Where(x => x.Name.ToLower() == sourceName.ToLower()).FirstOrDefault()?.Listeners?.Add?.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
+            return SysDiag?.Sources?.Where(x => x.Name.ToLower() == sourceName.ToLower()).FirstOrDefault()?.ListenersEx?.Add?.Where(x => x.Name.ToLower() == name.ToLower()).FirstOrDefault();
         }
 
-        private static ListenerElementCT SetListener(SystemDiagnosticsConfigCT SysDiag, string name, string type, string initializeData, ListenerLocation listenerType)
+        public static ListenerElementCT SetListener(SystemDiagnosticsConfigCT SysDiag, string name, string type, string initializeData, ListenerLocation listenerType)
         {
             ListenersCT listeners = null;
 
             switch (listenerType)
             {
                 case ListenerLocation.Shared:
-                    if (SysDiag.SharedListeners == null)
-                    {
-                        SysDiag.SharedListeners = new ListenersCT();
-                    }
-                    listeners = SysDiag.SharedListeners;
+                    //if (SysDiag.SharedListeners == null)
+                    //{
+                    //    SysDiag.SharedListeners = new ListenersCT();
+                    //}
+                    listeners = SysDiag.SharedListenersEx;
                     break;
 
                 case ListenerLocation.Trace:
@@ -63,11 +64,11 @@ namespace SystemDiagnosticsConfig
                         SysDiag.Trace = new TraceCT();
                     }
 
-                    if (SysDiag.Trace.Listeners == null)
-                    {
-                        SysDiag.Trace.Listeners = new ListenersCT();
-                    }
-                    listeners = SysDiag.Trace.Listeners;
+                    //if (SysDiag.Trace.Listeners == null)
+                    //{
+                    //    SysDiag.Trace.Listeners = new ListenersCT();
+                    //}
+                    listeners = SysDiag.Trace.ListenersEx;
                     break;
 
                 case ListenerLocation.Source:

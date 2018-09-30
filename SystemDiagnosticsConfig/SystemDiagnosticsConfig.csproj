@@ -11,6 +11,8 @@
     <AssemblyName>SystemDiagnosticsConfig</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,12 +47,18 @@
     <Compile Include="ConfigCollectionPropertyDescriptor.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="ConfigHelper.cs" />
-    <Compile Include="LogConfig.cs" />
+    <Compile Include="DisplayHelper.cs" />
+    <Compile Include="LogDefinition.cs" />
+    <Compile Include="LogListener.cs" />
+    <Compile Include="LogListenerCollection.cs" />
+    <Compile Include="LogListenerCollectionPropertyDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReflectionHelper.cs" />
-    <Compile Include="SerivceTraceLog.cs" />
+    <Compile Include="ServiceTraceLog.cs" />
     <Compile Include="SystemDiagnosticsConfig.cs" />
     <Compile Include="SystemDiagnosticsConfig.Generated.cs" />
+    <Compile Include="TraceLogDefinition.cs" />
+    <Compile Include="TypeConverter.cs" />
     <Compile Include="XmlSerializationElement.cs" />
     <Compile Include="XmlUtils.cs" />
   </ItemGroup>

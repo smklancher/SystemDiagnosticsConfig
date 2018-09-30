@@ -12,7 +12,9 @@ namespace SystemDiagnosticsConfig
     {
 
         /// <summary>
-        /// 
+        /// Given "() => this.MyProperty)": 
+        /// 1. If MyProperty is null it will be set to a new instance of its type
+        /// 2. Return MyProperty
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="property">"() => this.MyProperty)"</param>
