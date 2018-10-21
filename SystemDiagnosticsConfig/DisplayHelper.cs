@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +17,7 @@ namespace SystemDiagnosticsConfig
         private DataGridView dgv;
 
         private DataGridViewCheckBoxColumn enabledColumn = new DataGridViewCheckBoxColumn();
+        private DataGridViewTextBoxColumn fileColumn = new DataGridViewTextBoxColumn();
         private DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
         private DataGridViewComboBoxColumn Level=new DataGridViewComboBoxColumn();
         private DataGridViewTextBoxColumn Location=new DataGridViewTextBoxColumn();
@@ -55,6 +58,13 @@ namespace SystemDiagnosticsConfig
                 nameColumn.Name = "Name";
                 // 
                 // 
+                // File
+                // 
+                fileColumn.DataPropertyName = "ConfigFilename";
+                fileColumn.HeaderText = "File";
+                fileColumn.Name = "File";
+                // 
+                // 
                 // Level
                 // 
                 Level.DataPropertyName = "Level";
@@ -72,6 +82,7 @@ namespace SystemDiagnosticsConfig
                 // 
                 // Details
                 // 
+                Details.DataPropertyName = "Details";
                 Details.HeaderText = "Details";
                 Details.Name = "Details";
                 Details.ReadOnly = true;
@@ -80,7 +91,7 @@ namespace SystemDiagnosticsConfig
                 dgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
                 dgv.Columns.Clear();
                 dgv.Columns.AddRange(
-                    new DataGridViewColumn[] {enabledColumn, nameColumn,Level,Location,Details}
+                    new DataGridViewColumn[] {enabledColumn, fileColumn, nameColumn,Level,Location,Details}
                     );
 
                 bs.DataSource = typeof(LogDefinition);
@@ -175,7 +186,7 @@ namespace SystemDiagnosticsConfig
             bs.Clear();
             foreach (var l in defs)
             {
-                //l.LoadLogDetails();
+                //l.Details = l.LogFileSize==string.Empty ? l.Details : $"{l.LogFileSize}, {l.Details}";
                 bs.Add(l);
             }
 
@@ -188,6 +199,63 @@ namespace SystemDiagnosticsConfig
             }
 
             SizeDataGridColumns();
+        }
+
+        public void OpenConfig()
+        {
+            var log = SelectedLogDef;
+            if (log == null) return;
+
+            Process.Start(log.Config.Filename);
+        }
+
+        public void OpenLogOrFolder()
+        {
+            var log = SelectedLogDef;
+            if (log == null) return;
+
+
+            // event log (check type, or recognize name) = open event log
+            if (log.ListenerType.Contains("eventlog"))
+            {
+                Process.Start("eventvwr.msc");
+                return;
+            }
+
+            FileInfo f = log.LogFile;
+
+            if (f.Exists)
+            {
+                Process.Start(f.FullName);
+            }else if (f.Directory.Exists)
+            {
+                Process.Start(f.Directory.FullName);
+            }
+
+            // if no criteria above is met, do nothing
+        }
+
+        public string BackupConfigs(ConfigCollection configs)
+        {
+            StringBuilder msg = new StringBuilder("Config backup results:\n");
+            foreach(var c in configs)
+            {
+                string bkname = Path.GetFileNameWithoutExtension(c.Filename);
+                string timestamp = DateTime.Now.ToString("s").Replace(":", ".");
+                bkname = Path.Combine(Path.GetDirectoryName(c.Filename),$"{bkname}_{timestamp}.config");
+
+                try
+                {
+                    File.Copy(c.Filename, bkname,true);
+                    msg.AppendLine($"SUCCESS: {bkname}");
+                }
+                catch (Exception ex)
+                {
+                    msg.AppendLine($"ERROR: {bkname}");
+                    msg.AppendLine($"\t{ex.Message}");
+                }
+            }
+            return msg.ToString();
         }
     }
 }

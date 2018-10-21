@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SystemDiagnosticsConfig
 {
     [TypeConverter(typeof(BlankExpandConverter))]
-    public class LogListenerCollection : Collection<LogListener>, ICustomTypeDescriptor
+    public class LogDefinitionCollection : Collection<LogDefinition>, ICustomTypeDescriptor
     {
 
 
@@ -90,7 +90,7 @@ namespace SystemDiagnosticsConfig
             for (int i = 0; i < this.Count; i++)
             {
                 // Create a property descriptor for the employee item and add to the property descriptor collection
-                var pd = new LogListenerCollectionPropertyDescriptor(this, i);
+                var pd = new LogDefinitionCollectionPropertyDescriptor(this, i);
                 pds.Add(pd);
             }
             // return the property descriptor collection

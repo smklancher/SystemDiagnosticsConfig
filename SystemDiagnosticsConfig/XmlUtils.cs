@@ -32,20 +32,20 @@ namespace SystemDiagnosticsConfig
         /// Returns true if the text of the comment correctly parses as an XElement, available as out el (but with no parent!).
         /// </summary>
         /// <param name="comment"></param>
-        /// <param name="el"></param>
+        /// <param name="UncommentedDisconnectedXml"></param>
         /// <returns></returns>
-        public static bool IsCommentValidXml(this XComment comment, out XElement el)
+        public static bool IsCommentValidXml(this XComment comment, out XElement UncommentedDisconnectedXml)
         {
             XDocument doc;
             try
             {
                 doc = XDocument.Parse(comment.Value.Trim());
-                el = doc.Root;
+                UncommentedDisconnectedXml = doc.Root;
                 return true;
             }
             catch (Exception)
             {
-                el = null;
+                UncommentedDisconnectedXml = null;
                 return false;
             }
         }
@@ -62,8 +62,10 @@ namespace SystemDiagnosticsConfig
                 var parent = comment.Parent;
                 var next = comment.NextNode;
                 var prev = comment.PreviousNode;
+                //use parent namespace
+                el.Name = (parent.Name.Namespace + el.Name.LocalName) as XName;
                 comment.ReplaceWith(el);
-                //need to update el with the "connected" version of the element (same name, prev & next nodes)
+                //need to update el to reference the "connected" version of the element (same name, prev & next nodes)
                 el=parent.Elements(el.Name).Where(x => x.NextNode == next && x.PreviousNode == prev).First();
                 return true;
             }
@@ -86,17 +88,17 @@ namespace SystemDiagnosticsConfig
         /// <param name="xbase"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static IEnumerable<XComment> GetDescendantsCommentedOut(this XElement xbase, string name)
+        public static IEnumerable<XComment> GetDescendantsCommentedOut(this XElement xbase, XName name)
         {
             //get all comments that contain this name
-            var comments = xbase.DescendantNodes().OfType<XComment>().Where(x => x.Value.Contains(name));
+            var comments = xbase.DescendantNodes().OfType<XComment>().Where(x => x.Value.Contains(name.LocalName));
 
 
             // return any that parse to valid xml with this element name
             var commentedElements = comments.Where(x => {
                 if (x.IsCommentValidXml(out XElement el))
                 {
-                    return (el.Name == name);
+                    return (el.Name.LocalName == name.LocalName);
                 }
                 return false;
             });

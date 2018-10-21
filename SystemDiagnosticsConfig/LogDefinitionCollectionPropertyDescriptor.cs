@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SystemDiagnosticsConfig
 {
-    class LogListenerCollectionPropertyDescriptor : PropertyDescriptor
+    class LogDefinitionCollectionPropertyDescriptor : PropertyDescriptor
     {
-        private LogListenerCollection collection = null;
+        private LogDefinitionCollection collection = null;
         private int index = -1;
 
-        public LogListenerCollectionPropertyDescriptor(LogListenerCollection coll, int idx) :
+        public LogDefinitionCollectionPropertyDescriptor(LogDefinitionCollection coll, int idx) :
             base("#" + idx.ToString(), null)
         {
             this.collection = coll;
@@ -44,8 +45,8 @@ namespace SystemDiagnosticsConfig
         {
             get
             {
-                LogListener c = this.collection[index];
-                return $"({c.ListenerLocation.ToString()}) {c.ListenerName}";
+                LogDefinition c = this.collection[index];
+                return $"{c.Name} ({Path.GetFileName(c.Config.Filename)})";
             }
         }
 
@@ -54,7 +55,7 @@ namespace SystemDiagnosticsConfig
             get
             {
                 var c = this.collection[index];
-                return $"({c.ListenerLocation.ToString()}) {c.ListenerName}\nSources: {String.Join(", ",c.Sources.Select(x=>x.Name))}";
+                return $"{c.Location} ({c.ListenerType})\nSources: {String.Join(", ",c.Listener.Sources().Select(x=>x.Name))}";
             }
         }
 

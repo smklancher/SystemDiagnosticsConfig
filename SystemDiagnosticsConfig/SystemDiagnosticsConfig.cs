@@ -12,6 +12,34 @@ namespace SystemDiagnosticsConfig
 
     public partial class SystemDiagnosticsConfigCT
     {
+        [XmlIgnore()]
+        public Collection<SourceElementCT> SourcesEx
+        {
+            get
+            {
+                //this is needed since the Sources setter is private
+                if (Sources == null)
+                {
+                    Sources = new Collection<SourceElementCT>();
+                }
+                return Sources;
+            }
+        }
+
+        [XmlIgnore()]
+        public SwitchesCT SwitchesEx
+        {
+            get
+            {
+                if (Switches == null)
+                {
+                    Switches = new SwitchesCT();
+                }
+                return Switches;
+            }
+        }
+
+
         /// <summary>
         /// Ensures extra properties are initialized on listener objects
         /// </summary>
@@ -108,9 +136,18 @@ namespace SystemDiagnosticsConfig
         }
     }
 
+    
 
     public partial class SourceElementCT
     {
+        /// <summary>
+        /// <para>Optional System.Boolean [False]</para>
+        /// </summary>
+        [DefaultValue(false)]
+        [XmlAttribute("propagateActivity", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, DataType = "boolean")]
+        public bool propagateActivity { get; set; }
+
+
         /// <summary>
         /// Ensures extra properties are initialized on listener objects
         /// </summary>
@@ -132,6 +169,38 @@ namespace SystemDiagnosticsConfig
                 value?.Initialize(this);
                 Listeners = value;
             }
+        }
+
+
+        /// <summary>
+        /// Shared listeners referencing this source
+        /// </summary>
+        /// <param name="SysDiag"></param>
+        /// <returns></returns>
+        public IEnumerable<ListenerElementCT> SharedListeners(SystemDiagnosticsConfigCT SysDiag)
+        {
+            foreach (var l in ListenersEx.Add)
+            {
+                if (l.Location == ListenerLocation.ReferenceToShared)
+                {
+                    yield return l.ReferencedListener(SysDiag);
+                }
+            }
+        }
+
+        public SwitchElementCT AddReferenceToSwitch(SystemDiagnosticsConfigCT SysDiag, string switchName, string defaultValue)
+        {
+            var sw = SysDiag.SwitchesEx.Add.Where(x => x.Name.ToLower() == switchName.ToLower()).FirstOrDefault();
+            if (sw == null)
+            {
+                sw = new SwitchElementCT();
+                sw.Name = switchName;
+                sw.Value = defaultValue;
+                SysDiag.SwitchesEx.Add.Add(sw);
+            }
+
+            this.SwitchName = SwitchName;
+            return sw;
         }
     }
     
@@ -211,7 +280,7 @@ namespace SystemDiagnosticsConfig
         public List<SourceElementCT> Sources()
         {
             var list = new List<SourceElementCT>();
-            if (Location == ListenerLocation.Source)
+            if (Location == ListenerLocation.Source || Location == ListenerLocation.ReferenceToShared)
             {
                 list.Add((SourceElementCT)Parent);
             }
@@ -223,9 +292,6 @@ namespace SystemDiagnosticsConfig
                         l => l.Name.ToLower() == this.Name.ToLower()
                     ).FirstOrDefault() != null);
                 list.AddRange(s);
-            }else if (Location == ListenerLocation.ReferenceToShared)
-            {
-                // return nothing, expect caller to get referenced listener
             }else if (Location == ListenerLocation.Trace)
             {
                 //trace has no sources
@@ -244,7 +310,41 @@ namespace SystemDiagnosticsConfig
             return null;
         }
 
-        [System.ComponentModel.DefaultValue("None")]
+        public SourceElementCT AddReferenceToSource(SystemDiagnosticsConfigCT SysDiag, string sourceName)
+        {
+            switch (Location)
+            {
+                case ListenerLocation.Shared:
+                    //continue below
+                    break;
+                case ListenerLocation.Source:
+                case ListenerLocation.ReferenceToShared:
+                    return Sources().FirstOrDefault();
+                case ListenerLocation.Unknown:
+                case ListenerLocation.Trace:
+                default:
+                    throw new InvalidOperationException($"{Location.ToString("g")} cannot add reference to a source: {this.Name}");
+            }
+
+            var source= SysDiag.SourcesEx.Where(x => x.Name.ToLower() == sourceName.ToLower()).FirstOrDefault();
+            if (source == null)
+            {
+                source = new SourceElementCT();
+                source.Name = sourceName;
+                SysDiag.SourcesEx.Add(source);
+            }
+
+            var lref=source.ListenersEx.Add.Where(x => x.Name.ToLower() == Name.ToLower()).FirstOrDefault();
+            if (lref == null)
+            {
+                lref=SysDiag.AddListener(ListenerLocation.ReferenceToShared, source);
+                lref.Name = this.Name;
+            }
+
+            return source;
+        }
+
+        [DefaultValue("None")]
         [XmlAttribute("traceOutputOptions", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string TraceOutputOptionsString { get; set; }
         // enum needs to be redefined with Flags/powers-of-two

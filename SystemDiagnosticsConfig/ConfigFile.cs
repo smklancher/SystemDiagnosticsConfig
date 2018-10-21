@@ -40,8 +40,21 @@ namespace SystemDiagnosticsConfig
         [Browsable(false)]
         public XDocument XDoc { get; }
 
-        //public LogListenerCollection Listeners { get; set; }
+        private List<LogDefinition> AddedDefinitions=new List<LogDefinition>();
 
+        public LogDefinition AddDefinition<T>()
+        {
+            //if (!typeof(T).IsAssignableFrom(typeof(LogDefinition)))
+            if (!typeof(LogDefinition).IsAssignableFrom(typeof(T)))
+            {
+                throw new InvalidOperationException($"Can only add types from {nameof(LogDefinition)}");
+            }
+            var ld=(LogDefinition)Activator.CreateInstance(typeof(T), this);
+            AddedDefinitions.Add(ld);
+            return ld;
+        }
+
+        [Browsable(false)]
         public IEnumerable<LogDefinition> Definitions
         {
             get
@@ -55,8 +68,28 @@ namespace SystemDiagnosticsConfig
                     {
                         yield return (LogDefinition)p.GetValue(this);
                     }
-                    
                 }
+                foreach(var ld in AddedDefinitions)
+                {
+                    yield return ld;
+                }
+            }
+        }
+
+        private LogDefinitionCollection ldc = new LogDefinitionCollection();
+
+        public LogDefinitionCollection DefinitionCollection
+        {
+            get
+            {
+                foreach(var d in Definitions)
+                {
+                    if (!ldc.Contains(d))
+                    {
+                        ldc.Add(d);
+                    }
+                }
+                return ldc;
             }
         }
 
@@ -103,6 +136,8 @@ namespace SystemDiagnosticsConfig
             return sd;
         }
 
+        private Dictionary<string, XNode> NodeIds { get; set; }
+
         [Browsable(false)]
         public SystemDiagnosticsConfigCT SysDiag
         {
@@ -110,64 +145,25 @@ namespace SystemDiagnosticsConfig
             {
                 if (sysdiag == null)
                 {
-                    sysdiag = Deserialize<SystemDiagnosticsConfigCT>(SysDiagElement(out bool WasComment).ToString());
+                    XElement input = SysDiagElement(out bool WasComment);
+                    sysdiag = XmlSerializationElement.EnhancedDeserialize<SystemDiagnosticsConfigCT>(input, out Dictionary<string, XNode> nodeIds);
+                    NodeIds = nodeIds;
                     sysdiag.IsComment = WasComment;
-                    if (WasComment)
-                    {
-                        Debug.Print($"Found and uncommented {sdkeyname} instance");
-                    }
                 }
                 return sysdiag;
             } 
         }
-
-        //private LogListenerCollection GetLogListeners()
-        //{
-        //    var list = new LogListenerCollection();
-
-        //    // Trace listeners
-        //    if (SysDiag.Trace?.ListenersEx?.Add != null)
-        //    {
-        //        foreach (var l in SysDiag.Trace.ListenersEx.Add)
-        //        {
-        //            list.Add(new LogListener(SysDiag, l));
-
-        //        }
-        //    }
-            
-
-        //    // Shared listeners
-        //    if (SysDiag.SharedListenersEx?.Add != null)
-        //    {
-        //        foreach (var l in SysDiag.SharedListenersEx.Add)
-        //        {
-        //            list.Add(new LogListener(SysDiag, l));
-        //        }
-        //    }
-            
-
-        //    // Source listeners that are not reference to shared
-        //    if (SysDiag.Sources != null)
-        //    {
-        //        foreach (var s in SysDiag.Sources)
-        //        {
-        //            if(s.ListenersEx?.Add != null)
-        //            {
-        //                foreach (var l in s.ListenersEx.Add)
-        //                {
-        //                    if (!String.IsNullOrEmpty(l.Type))
-        //                    {
-        //                        list.Add(new LogListener(SysDiag, l));
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-            
-
-        //    return list;
-        //}
         
+
+        /// <summary>
+        /// Reserialized XML of the SysDiag object 
+        /// </summary>
+        /// <returns></returns>
+        public XElement SysDiagObjXml()
+        {
+            return XmlSerializationElement.EnhancedSerializeToXElement(SysDiag, NodeIds);
+        }
+
 
         public void SaveXml()
         {
@@ -192,43 +188,6 @@ namespace SystemDiagnosticsConfig
             SaveXml();
         }
 
-        /// <summary>
-        /// Reserialized XML of the SysDiag object 
-        /// </summary>
-        /// <returns></returns>
-        public XElement SysDiagObjXml()
-        {
-            var xml = SerializeToXElement(SysDiag);
-            return xml;
-        }
 
-        private static T Deserialize<T>(string data) where T : class, new()
-        {
-            if (string.IsNullOrEmpty(data))
-                return null;
-
-            var ser = new XmlSerializer(typeof(T));
-
-            using (var sr = new StringReader(data))
-            {
-                return (T)ser.Deserialize(sr);
-            }
-        }
-
-        private static XElement SerializeToXElement(object o)
-        {
-            var doc = new XDocument();
-            using (XmlWriter writer = doc.CreateWriter())
-            {
-                //this avoids xml namespace declaration
-                XmlSerializerNamespaces ns = new XmlSerializerNamespaces(
-                                   new[] { XmlQualifiedName.Empty });
-                XmlSerializer serializer = new XmlSerializer(o.GetType(), "");
-                serializer.Serialize(writer, o, ns);
-            }
-
-            return doc.Root;
-        }
-        
     }
 }
