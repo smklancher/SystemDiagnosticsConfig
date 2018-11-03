@@ -14,14 +14,7 @@ namespace SystemDiagnosticsConfig
         }
 
         protected override bool IsTrace => true;
-
-        public override IEnumerable<string> AvailableLevels
-        {
-            get
-            {
-                yield return "Trace";
-            }
-        }
+        
 
         public override string Level { get => "Trace"; set { } }
 

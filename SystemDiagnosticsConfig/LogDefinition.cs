@@ -11,7 +11,7 @@ using SystemDiagnosticsConfig;
 namespace SystemDiagnosticsConfig
 {
     [TypeConverter(typeof(BlankExpandConverter))]
-    public abstract class LogDefinition
+    public abstract class LogDefinition : LogDisplay
     {
         public LogDefinition(ConfigFile config)
         {
@@ -24,7 +24,7 @@ namespace SystemDiagnosticsConfig
 
         protected Dictionary<string, string> DetailParts { get; } = new Dictionary<string, string>();
 
-        public virtual string Details
+        public override string Details
         {
             get
             {
@@ -39,10 +39,8 @@ namespace SystemDiagnosticsConfig
         protected abstract string DefaultListenerType { get; }
 
         public abstract string DefaultLocation { get; set; }
-        public abstract string Name { get; }
 
-        public abstract string Level { get; set; }
-        public virtual IEnumerable<string> AvailableLevels { get { yield return Level; } }
+        //public override IEnumerable<string> AvailableLevels { get { yield return Level; } }
 
         public IEnumerable<string> StandardLevels
         {
@@ -63,8 +61,9 @@ namespace SystemDiagnosticsConfig
         /// </summary>
         /// <returns></returns>
         protected abstract ListenerElementCT FindExistingListener();
+        
 
-        public string ConfigFilename => Config.Filename;
+        public override string ConfigLocation => Config.Filename;
 
         /// <summary>
         /// File at Location if rooted path, or file in config folder if not
@@ -76,13 +75,13 @@ namespace SystemDiagnosticsConfig
                 FileInfo f = null;
                 try
                 {
-                    if (Path.IsPathRooted(Location))
+                    if (Path.IsPathRooted(LogLocation))
                     {
-                        f = new FileInfo(Location);
+                        f = new FileInfo(LogLocation);
                     }
                     else
                     {
-                        string logfileInConfigPath = Path.Combine(Path.GetDirectoryName(Config.Filename), Location);
+                        string logfileInConfigPath = Path.Combine(Path.GetDirectoryName(Config.Filename), LogLocation);
                         f = new FileInfo(logfileInConfigPath);
                     }
                         
@@ -116,7 +115,7 @@ namespace SystemDiagnosticsConfig
         }
 
 
-        public bool Enabled
+        public override bool Enabled
         {
             get
             {
@@ -135,7 +134,7 @@ namespace SystemDiagnosticsConfig
             }
         }
 
-        public virtual string Location
+        public override string LogLocation
         {
             get
             {
@@ -152,7 +151,7 @@ namespace SystemDiagnosticsConfig
         }
 
 
-        public virtual string ListenerType
+        public string ListenerType
         {
             get
             {
@@ -202,6 +201,37 @@ namespace SystemDiagnosticsConfig
 
         }
 
-        
+        public override void OpenLog()
+        {
+            // event log (check type, or recognize name) = open event log
+            if (ListenerType.Contains("eventlog"))
+            {
+                Process.Start("eventvwr.msc");
+                return;
+            }
+
+            FileInfo f = LogFile;
+
+            if (f.Exists)
+            {
+                Process.Start(f.FullName);
+            }
+            else if (f.Directory.Exists)
+            {
+                Process.Start(f.Directory.FullName);
+            }
+
+            // if no criteria above is met, do nothing
+        }
+
+        public override void SaveConfig()
+        {
+            Config.SaveXml();
+        }
+
+        public override void OpenConfig()
+        {
+            Process.Start(Config.Filename);
+        }
     }
 }

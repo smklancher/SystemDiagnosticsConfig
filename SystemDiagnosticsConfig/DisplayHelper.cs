@@ -60,9 +60,9 @@ namespace SystemDiagnosticsConfig
                 // 
                 // File
                 // 
-                fileColumn.DataPropertyName = "ConfigFilename";
-                fileColumn.HeaderText = "File";
-                fileColumn.Name = "File";
+                fileColumn.DataPropertyName = "ConfigLocation";
+                fileColumn.HeaderText = "ConfigLocation";
+                fileColumn.Name = "ConfigLocation";
                 // 
                 // 
                 // Level
@@ -76,9 +76,9 @@ namespace SystemDiagnosticsConfig
                 // 
                 // Location
                 // 
-                Location.DataPropertyName = "Location";
-                Location.HeaderText = "Location";
-                Location.Name = "Location";
+                Location.DataPropertyName = "LogLocation";
+                Location.HeaderText = "LogLocation";
+                Location.Name = "LogLocation";
                 // 
                 // Details
                 // 
@@ -94,42 +94,17 @@ namespace SystemDiagnosticsConfig
                     new DataGridViewColumn[] {enabledColumn, fileColumn, nameColumn,Level,Location,Details}
                     );
 
-                bs.DataSource = typeof(LogDefinition);
+                bs.DataSource = typeof(LogDisplay);
                 dgv.DataSource = bs;
                 
                 ((System.ComponentModel.ISupportInitialize)(dgv)).EndInit();
             }
         }
-
-        private TextBox textBox;
-        public TextBox TextBox
-        {
-            get
-            {
-                return textBox;
-            }
-            set
-            {
-                textBox = value;
-            }
-        }
-
-        private PropertyGrid propertyGrid;
-        public PropertyGrid PropertyGrid
-        {
-            get
-            {
-
-                return propertyGrid;
-            }
-            set
-            {
-                propertyGrid = value;
-            }
-        }
+        public TextBox TextBox { get; set; }
+        public PropertyGrid PropertyGrid { get; set; }
         #endregion
 
-        public LogDefinition SelectedLogDef
+        public LogDisplay SelectedLogDef
         {
             get
             {
@@ -142,7 +117,7 @@ namespace SystemDiagnosticsConfig
                 {
                     row = dgv.SelectedRows[0];
                 }
-                if (row?.DataBoundItem is LogDefinition ld)
+                if (row?.DataBoundItem is LogDisplay ld)
                 {
                     return ld;
                 }
@@ -152,11 +127,16 @@ namespace SystemDiagnosticsConfig
 
         public void SelectedLogDefChanged()
         {
-            var log = SelectedLogDef;
+            LogDisplay log = SelectedLogDef;
             if (log != null)
             {
-                TextBox.Text = log.Config.SysDiagObjXml().ToString();
-                propertyGrid.SelectedObject = log;
+                PropertyGrid.SelectedObject = log;
+            }
+
+            LogDefinition def = log as LogDefinition;
+            if (def != null)
+            {
+                TextBox.Text = def.Config.SysDiagObjXml().ToString();
             }
 
         }
@@ -178,8 +158,8 @@ namespace SystemDiagnosticsConfig
         public void DisplayConfigs(ConfigCollection configs)
         {
             // Display configs in property grid
-            propertyGrid.SelectedObject = configs;
-            propertyGrid.ExpandAllGridItems();
+            PropertyGrid.SelectedObject = configs;
+            PropertyGrid.ExpandAllGridItems();
 
             // Display log defs in datagrid
             var defs = configs.SelectMany(x => x.Definitions);
@@ -193,7 +173,7 @@ namespace SystemDiagnosticsConfig
             // Bind dropdown to available levels per def type
             foreach (DataGridViewRow row in dgv.Rows)
             {
-                var def = (LogDefinition)row.DataBoundItem;
+                var def = (LogDisplay)row.DataBoundItem;
                 DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)(row.Cells["Level"]);
                 cell.DataSource = def.AvailableLevels.ToList();
             }
@@ -201,38 +181,38 @@ namespace SystemDiagnosticsConfig
             SizeDataGridColumns();
         }
 
-        public void OpenConfig()
+        public void AddLog(LogDisplay ld)
         {
-            var log = SelectedLogDef;
-            if (log == null) return;
+            bs.Add(ld);
 
-            Process.Start(log.Config.Filename);
+            // Bind dropdown to available levels per def type
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                var def = (LogDisplay)row.DataBoundItem;
+                DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)(row.Cells["Level"]);
+                cell.DataSource = def.AvailableLevels.ToList();
+            }
         }
 
-        public void OpenLogOrFolder()
+
+        public void OpenConfig()
+        {
+            LogDisplay log = SelectedLogDef;
+            if (log == null) return;
+
+            log.OpenConfig();
+
+            //Process.Start(log.Config.Filename);
+        }
+
+        public void OpenLog()
         {
             var log = SelectedLogDef;
             if (log == null) return;
 
+            log.OpenLog();
 
-            // event log (check type, or recognize name) = open event log
-            if (log.ListenerType.Contains("eventlog"))
-            {
-                Process.Start("eventvwr.msc");
-                return;
-            }
-
-            FileInfo f = log.LogFile;
-
-            if (f.Exists)
-            {
-                Process.Start(f.FullName);
-            }else if (f.Directory.Exists)
-            {
-                Process.Start(f.Directory.FullName);
-            }
-
-            // if no criteria above is met, do nothing
+            
         }
 
         public string BackupConfigs(ConfigCollection configs)

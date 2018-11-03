@@ -55,7 +55,7 @@ namespace SystemDiagnosticsConfig
             get
             {
                 var c = this.collection[index];
-                return $"{c.Location} ({c.ListenerType})\nSources: {String.Join(", ",c.Listener.Sources().Select(x=>x.Name))}";
+                return $"{c.LogLocation} ({c.ListenerType})\nSources: {String.Join(", ",c.Listener.Sources().Select(x=>x.Name))}";
             }
         }
 
