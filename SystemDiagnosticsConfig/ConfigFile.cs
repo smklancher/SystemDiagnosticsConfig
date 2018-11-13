@@ -31,6 +31,22 @@ namespace SystemDiagnosticsConfig
             XDoc = doc;
         }
 
+        public IEnumerable<ConfigListener> NonDefinitionListeners
+        {
+            get
+            {
+                var DefListeners = Definitions.Select(x=>x.Listener);
+                foreach(var l in SysDiag.AllListeners)
+                {
+                    //Not already in the list of listeners claimed by definitions
+                    if (!DefListeners.Contains(l))
+                    {
+                        yield return new ConfigListener(this,l);
+                    }
+                }
+            }
+        }
+
         [Browsable(false)]
         public string Filename { get; private set; }
 

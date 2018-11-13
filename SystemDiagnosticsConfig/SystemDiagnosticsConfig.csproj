@@ -53,6 +53,7 @@
     <Compile Include="ConfigHelper.cs" />
     <Compile Include="DisplayHelper.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="ConfigListener.cs" />
     <Compile Include="LogDisplay.cs" />
     <Compile Include="LogDefinition.cs" />
     <Compile Include="LogListener.cs" />

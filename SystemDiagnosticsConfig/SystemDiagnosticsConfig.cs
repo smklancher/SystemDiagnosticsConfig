@@ -63,6 +63,27 @@ namespace SystemDiagnosticsConfig
             }
         }
 
+        [XmlIgnore()]
+        public IEnumerable<ListenerElementCT> AllListeners
+        {
+            get
+            {
+                foreach (var l in SharedListenersEx.Add)
+                {
+                    yield return l;
+                }
+                foreach (var l in Trace.ListenersEx.Add)
+                {
+                    yield return l;
+                }
+                foreach (var l in SourcesEx.SelectMany(x=>x.ListenersEx.Add))
+                {
+                    yield return l;
+                }
+            }
+        }
+
+
 
         public ListenerElementCT AddListener(ListenerLocation location)
         {

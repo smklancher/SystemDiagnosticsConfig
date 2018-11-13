@@ -22,20 +22,20 @@ namespace SystemDiagnosticsConfig
             return base.ConvertTo(context, culture, value, destType);
         }
     }
-    internal class LogConfigConverter : ExpandableObjectConverter
-    {
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destType)
-        {
-            if (destType == typeof(string) && value is LogListener)
-            {
-                // Cast the value to an Employee type
-                LogListener c = (LogListener)value;
+    //internal class LogConfigConverter : ExpandableObjectConverter
+    //{
+    //    public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destType)
+    //    {
+    //        if (destType == typeof(string) && value is LogListener)
+    //        {
+    //            // Cast the value to an Employee type
+    //            LogListener c = (LogListener)value;
 
-                return String.Empty; // System.IO.Path.GetFileName(c.LogFileName);
-            }
-            return base.ConvertTo(context, culture, value, destType);
-        }
-    }
+    //            return String.Empty; // System.IO.Path.GetFileName(c.LogFileName);
+    //        }
+    //        return base.ConvertTo(context, culture, value, destType);
+    //    }
+    //}
 
     internal class BlankExpandConverter: ExpandableObjectConverter
     {
