@@ -92,22 +92,22 @@ namespace SystemDiagnosticsConfig
             }
         }
 
-        private LogDefinitionCollection ldc = new LogDefinitionCollection();
+        //private LogDefinitionCollection ldc = new LogDefinitionCollection();
 
-        public LogDefinitionCollection DefinitionCollection
-        {
-            get
-            {
-                foreach(var d in Definitions)
-                {
-                    if (!ldc.Contains(d))
-                    {
-                        ldc.Add(d);
-                    }
-                }
-                return ldc;
-            }
-        }
+        //public LogDefinitionCollection DefinitionCollection
+        //{
+        //    get
+        //    {
+        //        foreach(var d in Definitions)
+        //        {
+        //            if (!ldc.Contains(d))
+        //            {
+        //                ldc.Add(d);
+        //            }
+        //        }
+        //        return ldc;
+        //    }
+        //}
 
         /// <summary>
         /// XML from the system.diagnostics section, whether existing, commented out, or newly created

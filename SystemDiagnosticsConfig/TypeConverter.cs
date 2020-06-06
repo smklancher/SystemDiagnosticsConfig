@@ -37,7 +37,7 @@ namespace SystemDiagnosticsConfig
     //    }
     //}
 
-    internal class BlankExpandConverter: ExpandableObjectConverter
+    public class BlankExpandConverter: ExpandableObjectConverter
     {
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destType)
         {
