@@ -68,18 +68,31 @@ namespace SystemDiagnosticsConfig
         {
             get
             {
-                foreach (var l in SharedListenersEx.Add)
+                if(SharedListeners?.Add != null)
                 {
-                    yield return l;
+                    foreach (var l in SharedListenersEx.Add)
+                    {
+                        yield return l;
+                    }
                 }
-                foreach (var l in Trace.ListenersEx.Add)
+
+                if (Trace?.ListenersEx?.Add != null)
                 {
-                    yield return l;
+                    foreach (var l in Trace.ListenersEx.Add)
+                    {
+                        yield return l;
+                    }
                 }
-                foreach (var l in SourcesEx.SelectMany(x=>x.ListenersEx.Add))
+
+                if (SourcesEx != null)
                 {
-                    yield return l;
+                    foreach (var l in SourcesEx.SelectMany(x => x.ListenersEx.Add))
+                    {
+                        yield return l;
+                    }
                 }
+
+                
             }
         }
 
